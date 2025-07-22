@@ -99,14 +99,19 @@
             sendButton.disabled = true;
 
             try {
-                // --- CAMBIO IMPORTANTE: AHORA APUNTA A TU SERVIDOR DE RENDER ---
-                const response = await fetch("https://lyra-ia-backend.onrender.com/api/ask", {
+                // --- CAMBIO FINAL: AHORA APUNTA A TU SERVIDOR DE HUGGING FACE ---
+                const response = await fetch("https://lord-ricard-lyra-ia-backend.hf.space/api/ask", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ question }),
                 });
 
-                if (!response.ok) throw new Error("Error en la API");
+                if (!response.ok) {
+                    // Intentamos leer el error del cuerpo de la respuesta si es posible
+                    const errorData = await response.json().catch(() => null);
+                    const errorMessage = errorData ? JSON.stringify(errorData) : `Error en el servidor con estado: ${response.status}`;
+                    throw new Error(errorMessage);
+                }
 
                 const data = await response.json();
                 
@@ -116,7 +121,8 @@
             } catch (error) {
                 console.error("Error al llamar a la API:", error);
                 hideTypingIndicator();
-                addMessage('lyra', "Lo siento, no pude conectarme con mi cerebro.");
+                // Mensaje de error mejorado para el usuario
+                addMessage('lyra', "Lo siento, no pude conectarme con mi cerebro. El servidor podría estar iniciándose. Por favor, espera un momento y vuelve a intentarlo.");
             } finally {
                 sendButton.disabled = false;
             }
