@@ -107,7 +107,6 @@
                 });
 
                 if (!response.ok) {
-                    // Intentamos leer el error del cuerpo de la respuesta si es posible
                     const errorData = await response.json().catch(() => null);
                     const errorMessage = errorData ? JSON.stringify(errorData) : `Error en el servidor con estado: ${response.status}`;
                     throw new Error(errorMessage);
@@ -121,7 +120,6 @@
             } catch (error) {
                 console.error("Error al llamar a la API:", error);
                 hideTypingIndicator();
-                // Mensaje de error mejorado para el usuario
                 addMessage('lyra', "Lo siento, no pude conectarme con mi cerebro. El servidor podría estar iniciándose. Por favor, espera un momento y vuelve a intentarlo.");
             } finally {
                 sendButton.disabled = false;
